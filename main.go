@@ -1,37 +1,19 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/rafael-almeida/go-todo/handler"
 )
 
 const CONN_ADR = "localhost:8080"
 
-type todo struct {
-	Id string
-}
-
-func getTodos(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, todos)
-}
-
-func getTodoById(ctx *gin.Context) {
-	id := ctx.Param("id")
-	for _, t := range todos {
-		if t.Id == id {
-			ctx.JSON(http.StatusOK, t)
-			return
-		}
-	}
-	ctx.JSON(http.StatusNotFound, gin.H{"message": "todo " + id + " was not found"})
-}
-
-var todos = []todo{{Id: "1"}, {Id: "2"}}
-
 func main() {
 	router := gin.Default()
-	router.GET("/todos", getTodos)
-	router.GET("/todos/:id", getTodoById)
+
+	router.POST("/todos", handler.PostTodo)
+	router.GET("/todos", handler.GetTodos)
+	router.GET("/todos/:id", handler.GetTodoById)
+	router.DELETE("/todos/:id", handler.DeleteTodo)
+
 	router.Run(CONN_ADR)
 }
